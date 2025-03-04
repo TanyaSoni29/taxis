@@ -30,8 +30,9 @@ import { useForm } from 'react-hook-form';
 import { recordTurnDown } from '../utils/apiReq';
 import { openSnackbar } from '../context/snackbarSlice';
 import PermPhoneMsgIcon from '@mui/icons-material/PermPhoneMsg';
-import { formatDate } from '../utils/formatDate';
+// import { formatDate } from '../utils/formatDate';
 import CustomDialog from '../components/CustomDialog';
+import isLightColor from '../utils/isLight';
 // import { formatDate } from '../utils/formatDate';
 const Navbar = () => {
 	const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -711,16 +712,32 @@ function SearchModal({ setOpenSearch, setDialogOpen }) {
 									activeSearchResult?.bookingId === booking?.bookingId
 										? 'bg-gray-300'
 										: ''
-								}`}
+								} cursor-pointer transition-opacity duration-200`}
+								style={{
+									backgroundColor: booking?.color,
+									color: isLightColor(booking?.color) ? 'black' : 'white',
+									opacity: 1,
+									transition: 'opacity 0.2s ease-in-out',
+								}}
+								onMouseEnter={(e) => {
+									e.currentTarget.style.opacity = 0.8;
+								}}
+								onMouseLeave={(e) => {
+									e.currentTarget.style.opacity = 1;
+								}}
 								onClick={() => {
 									dispatch(setActiveSearchResult(booking?.bookingId));
 									setDialogOpen(true);
 									setOpenSearch(false);
 								}}
 							>
-								<td className='border px-4 py-2'>{booking.bookingId}</td>
+								<td className='border px-4 py-2'>{booking?.bookingId}</td>
 								<td className='border px-4 py-2 whitespace-nowrap'>
-									{formatDate(booking.pickupDateTime)}
+									{new Date(booking?.pickupDateTime).toLocaleDateString(
+										'en-gb'
+									) +
+										' ' +
+										booking?.pickupDateTime?.split('T')[1].slice(0, 5)}
 								</td>
 								<td className='border px-4 py-2'>{booking.pickup}</td>
 								<td className='border px-4 py-2'>{booking.destination}</td>
