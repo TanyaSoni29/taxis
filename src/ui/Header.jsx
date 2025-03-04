@@ -17,7 +17,7 @@ import {
 import {
 	// changeActiveDate,
 	handleSearchBooking,
-	makeSearchInactive,
+	// makeSearchInactive,
 	setActiveSearchResult,
 	// setDateControl,
 	// makeSearchInactive,
@@ -48,7 +48,7 @@ const Navbar = () => {
 	// );
 	const isGoogleApiOn = useSelector((state) => state.bookingForm.isGoogleApiOn);
 	const callerId = useSelector((state) => state.caller);
-	const { activeSearch } = useSelector((state) => state.scheduler);
+	// const { activeSearch } = useSelector((state) => state.scheduler);
 	const [openSearch, setOpenSearch] = useState(false);
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [recordTurnModal, setRecordTurnModal] = useState(false);
@@ -62,12 +62,12 @@ const Navbar = () => {
 	// 	}
 	// };
 
-	const handleCancelSearch = () => {
-		setOpenSearch(false);
-		setTimeout(() => {
-			dispatch(makeSearchInactive());
-		}, 200);
-	};
+	// const handleCancelSearch = () => {
+	// 	setOpenSearch(false);
+	// 	setTimeout(() => {
+	// 		dispatch(makeSearchInactive());
+	// 	}, 200);
+	// };
 
 	const handleRecordTurnDown = () => {
 		setRecordTurnModal(true);
@@ -194,22 +194,12 @@ const Navbar = () => {
 							{/* Search Form Started here */}
 							{currentUser?.roleId !== 3 && (
 								<div className='flex justify-center items-center uppercase'>
-									{!activeSearch && (
-										<button
-											onClick={() => setOpenSearch(true)}
-											// className='text-sm'
-										>
-											Search
-										</button>
-									)}
-									{activeSearch && (
-										<button
-											onClick={handleCancelSearch}
-											// className='text-sm'
-										>
-											Cancel Search
-										</button>
-									)}
+									<button
+										onClick={() => setOpenSearch(true)}
+										// className='text-sm'
+									>
+										Search
+									</button>
 								</div>
 							)}
 
@@ -304,25 +294,14 @@ const Navbar = () => {
 					{/* Search Button */}
 					{currentUser?.roleId !== 3 && (
 						<div className='flex justify-start items-center uppercase mb-4'>
-							{!activeSearch ? (
-								<button
-									onClick={() => {
-										setOpenSearch(true);
-										setMenuOpen(false);
-									}}
-								>
-									Search
-								</button>
-							) : (
-								<button
-									onClick={() => {
-										handleCancelSearch();
-										setMenuOpen(false);
-									}}
-								>
-									Cancel Search
-								</button>
-							)}
+							<button
+								onClick={() => {
+									setOpenSearch(true);
+									setMenuOpen(false);
+								}}
+							>
+								Search
+							</button>
 						</div>
 					)}
 
