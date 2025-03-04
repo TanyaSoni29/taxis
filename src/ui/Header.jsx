@@ -446,8 +446,10 @@ function SearchModal({ setOpenSearch, setDialogOpen }) {
     },
   });
 
-  console.log(activeSearchResults);
-
+  const bookings = [...activeSearchResults];
+  const sortedBookings = bookings?.sort(
+    (a, b) => new Date(b?.pickupDateTime) - new Date(a?.pickupDateTime)
+  );
   const handleSubmitForm = async (data) => {
     console.log("form Data", data);
     const newinputData = {
@@ -640,7 +642,7 @@ function SearchModal({ setOpenSearch, setDialogOpen }) {
             </tr>
           </thead>
           <tbody>
-            {activeSearchResults.map((booking, index) => (
+            {sortedBookings?.map((booking, index) => (
               <tr
                 key={index}
                 className={`hover:bg-gray-300 cursor-pointer ${
