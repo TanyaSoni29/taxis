@@ -18,6 +18,7 @@ import {
 	// changeActiveDate,
 	handleSearchBooking,
 	makeSearchInactive,
+	setActiveSearchResult,
 	// setDateControl,
 	// makeSearchInactive,
 } from '../context/schedulerSlice';
@@ -29,6 +30,8 @@ import { useForm } from 'react-hook-form';
 import { recordTurnDown } from '../utils/apiReq';
 import { openSnackbar } from '../context/snackbarSlice';
 import PermPhoneMsgIcon from '@mui/icons-material/PermPhoneMsg';
+import { formatDate } from '../utils/formatDate';
+import CustomDialog from '../components/CustomDialog';
 // import { formatDate } from '../utils/formatDate';
 const Navbar = () => {
 	const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -37,7 +40,7 @@ const Navbar = () => {
 	const dispatch = useDispatch();
 	const isMobile = useMediaQuery('(max-width:640px)');
 	const isTablet = useMediaQuery('(min-width: 768px) and (max-width: 1023px)');
-
+	const [dialogOpen, setDialogOpen] = useState(false);
 	// console.log(currentUser);
 	// const activeTestMode = useSelector(
 	// 	(state) => state.bookingForm.isActiveTestMode
@@ -86,6 +89,7 @@ const Navbar = () => {
 							// setSearchData={setSearchData}
 							// handleKeyPress={handleKeyPress}
 							setOpenSearch={setOpenSearch}
+							setDialogOpen={setDialogOpen}
 						/>
 					</Modal>
 				)}
@@ -95,6 +99,14 @@ const Navbar = () => {
 						open={recordTurnModal}
 					>
 						<RecordTurn setRecordTurnModal={setRecordTurnModal} />
+					</Modal>
+				)}
+				{dialogOpen && (
+					<Modal
+						open={dialogOpen}
+						setOpen={setDialogOpen}
+					>
+						<CustomDialog closeDialog={() => setDialogOpen(false)} />
 					</Modal>
 				)}
 			</>
@@ -451,10 +463,14 @@ function RecordTurn({ setRecordTurnModal }) {
 	);
 }
 
-function SearchModal({ setOpenSearch }) {
+function SearchModal({ setOpenSearch, setDialogOpen }) {
 	const isMobile = useMediaQuery('(max-width: 640px)');
 	const isTablet = useMediaQuery('(min-width: 768px) and (max-width: 1023px)');
 	const dispatch = useDispatch();
+
+	const { activeSearchResults, activeSearchResult } = useSelector(
+		(state) => state.scheduler
+	);
 	const {
 		register,
 		handleSubmit,
@@ -471,6 +487,8 @@ function SearchModal({ setOpenSearch }) {
 			details: '',
 		},
 	});
+
+	console.log(activeSearchResults);
 
 	const handleSubmitForm = async (data) => {
 		console.log('form Data', data);
@@ -498,12 +516,20 @@ function SearchModal({ setOpenSearch }) {
 			if (isMobile || isTablet) {
 				setActiveSectionMobileView('Scheduler');
 			}
-			setOpenSearch(false);
+			// setOpenSearch(false);
 			// Close the modal after search
 		} else {
 			console.log('Please enter search criteria');
 		}
 	};
+
+	const rows = [
+		'Job #',
+		'Date',
+		'Pickup Address',
+		'Destination Address',
+		'Name',
+	];
 
 	useEffect(() => {
 		if (isSubmitSuccessful) {
@@ -520,7 +546,7 @@ function SearchModal({ setOpenSearch }) {
 	}, [reset, isSubmitSuccessful]);
 
 	return (
-		<div className='bg-white p-6 rounded-lg shadow-lg w-[90vw] md:w-[45vw] sm:w-[25vw] max-w-md mx-auto'>
+		<div className='bg-white p-6 rounded-lg shadow-lg w-[90vw] md:w-[75vw] sm:w-[60vw] max-w-5xl mx-auto'>
 			<h2 className='text-2xl font-semibold mb-4 flex gap-1 items-center'>
 				<SearchIcon />
 				Search Bookings
@@ -662,6 +688,48 @@ function SearchModal({ setOpenSearch }) {
 					</LongButton>
 				</div>
 			</form>
+
+			<div className='w-full max-h-[300px] overflow-auto mt-4'>
+				<table className='min-w-full table-auto'>
+					<thead className='border border-gray-200'>
+						<tr>
+							{rows.map((row, index) => (
+								<th
+									key={index}
+									className='px-4 py-2 uppercase text-left'
+								>
+									{row}
+								</th>
+							))}
+						</tr>
+					</thead>
+					<tbody>
+						{activeSearchResults.map((booking, index) => (
+							<tr
+								key={index}
+								className={`hover:bg-gray-300 cursor-pointer ${
+									activeSearchResult?.bookingId === booking?.bookingId
+										? 'bg-gray-300'
+										: ''
+								}`}
+								onClick={() => {
+									dispatch(setActiveSearchResult(booking?.bookingId));
+									setDialogOpen(true);
+									setOpenSearch(false);
+								}}
+							>
+								<td className='border px-4 py-2'>{booking.bookingId}</td>
+								<td className='border px-4 py-2 whitespace-nowrap'>
+									{formatDate(booking.pickupDateTime)}
+								</td>
+								<td className='border px-4 py-2'>{booking.pickup}</td>
+								<td className='border px-4 py-2'>{booking.destination}</td>
+								<td className='border px-4 py-2'>{booking.passenger}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
 		</div>
 	);
 }

@@ -53,7 +53,7 @@ const AceScheduler = () => {
 		activeAllocate,
 		activeDate,
 		activeSearch,
-		activeSearchResults,
+		// activeSearchResults,
 		// activeSoftAllocate,
 		loading: searchLoading,
 	} = useSelector((state) => state.scheduler);
@@ -253,7 +253,8 @@ const AceScheduler = () => {
 	}, [dispatch]);
 
 	const eventSettings = {
-		dataSource: activeSearch ? activeSearchResults || [] : bookings || [],
+		// dataSource: activeSearch ? activeSearchResults || [] : bookings || [],
+		dataSource: bookings || [],
 		fields: fieldsData,
 		allowAdding: false,
 		allowEditing: false,
@@ -319,7 +320,8 @@ const AceScheduler = () => {
 						? window.innerHeight - 100
 						: window.innerHeight - 150
 				}
-				currentView={activeSearch ? 'Agenda' : 'Day'}
+				// currentView={activeSearch ? 'Agenda' : 'Day'}
+				currentView={'Day'}
 				selectedDate={activeDate}
 				navigating={(args) => {
 					dispatch(setDateControl(new Date(args.currentDate).toISOString()));
@@ -336,7 +338,8 @@ const AceScheduler = () => {
 					{ option: 'Day' },
 					{
 						option: 'Agenda',
-						allowVirtualScrolling: activeSearch ? true : false,
+						// allowVirtualScrolling: activeSearch ? true : false,
+						allowVirtualScrolling: false,
 						interval: 1,
 					},
 				]}
