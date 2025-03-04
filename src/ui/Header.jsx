@@ -433,7 +433,7 @@ function SearchModal({ setOpenSearch, setDialogOpen }) {
     register,
     handleSubmit,
     reset,
-    formState: { isSubmitSuccessful, errors }, // Access form errors
+    formState: { errors }, // Access form errors
   } = useForm({
     defaultValues: {
       pickupAddress: "",
@@ -492,22 +492,23 @@ function SearchModal({ setOpenSearch, setDialogOpen }) {
   ];
 
   useEffect(() => {
+    reset();
     dispatch(makeSearchInactive());
-  }, [dispatch]);
+  }, [dispatch, reset]);
 
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset({
-        pickupAddress: "",
-        pickupPostcode: "",
-        destinationAddress: "",
-        destinationPostcode: "",
-        passenger: "",
-        phoneNumber: "",
-        details: "",
-      });
-    }
-  }, [reset, isSubmitSuccessful]);
+  // useEffect(() => {
+  //   if (isSubmitSuccessful) {
+  //     reset({
+  //       pickupAddress: "",
+  //       pickupPostcode: "",
+  //       destinationAddress: "",
+  //       destinationPostcode: "",
+  //       passenger: "",
+  //       phoneNumber: "",
+  //       details: "",
+  //     });
+  //   }
+  // }, [reset, isSubmitSuccessful]);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg w-[90vw] md:w-[75vw] sm:w-[60vw] max-w-5xl mx-auto">
